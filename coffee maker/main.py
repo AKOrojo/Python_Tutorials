@@ -1,6 +1,7 @@
 from resources import MENU, resources
 
 machine_is_working = True
+profit = 0
 
 
 def resources_enough(a, b):
@@ -36,6 +37,7 @@ while machine_is_working != False:
     orders = input('What would you like? (espresso/latte/cappuccino): ')
     if orders == "report":
         print(resources)
+        print(f"Money: ${profit}")
     elif orders == "off":
         print("Machine Turning Off ")
         break
@@ -58,6 +60,7 @@ while machine_is_working != False:
                 print("Money not enough")
             elif all_money >= MENU[orders]["cost"]:
                 change(orders, all_money)
+                profit += MENU[orders]["cost"]
                 milk, water, coffee = resources_new(orders, resources)
                 resources["water"] = water
                 resources["milk"] = milk
