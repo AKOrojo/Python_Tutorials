@@ -1,7 +1,9 @@
+import email
 from tkinter import *
 from tkinter import messagebox
 import random
 import pyperclip
+import json
 
 FONT_NAME = "Times New Roman"
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
@@ -40,10 +42,36 @@ def password_generator():
 # ---------------------------- SAVE PASSWORD ------------------------------- #
 
 
+def searchbox():
+    website = website_entry.get()
+    try:
+        with open("Password Manager/data.json", "r") as data_file:
+            data = json.load(data_file)
+    except FileNotFoundError:
+        messagebox.showinfo(
+            title="Not Data Entry", message="No Data Entry")
+    else:
+        if website in data:
+            email = data[website]
+            username = email["username"]
+            password = email["password"]
+            messagebox.showinfo(
+                title=email, message=f"Username: {username}\n Password: {password}")
+        else:
+            messagebox.showinfo(
+                title="Not Vaild Entry", message="Search for valid entry")
+
+
 def save():
     website = website_entry.get()
     password = password_entry.get()
     username = username_entry.get()
+    new_data = {
+        website: {
+            "username": username,
+            "password": password
+        }
+    }
 
     if len(website) == 0 or len(password) == 0:
         messagebox.showinfo(title="Fill Boxes", message="All boxes not filled")
@@ -51,10 +79,19 @@ def save():
         is_ok = messagebox.askokcancel(
             title=website, message=f"Details\n Email: {username} \n Password: {password} \n Is It Okay?")
         if is_ok:
-            with open("Password Manager/data.txt", "a") as data_file:
-                data_file.write(f"{website} | {password} | {username}\n")
-                website_entry.delete(0, END)
-                password_entry.delete(0, END)
+            try:
+                with open("Password Manager/data.json", "r") as data_file:
+                    data = json.load(data_file)
+            except FileNotFoundError:
+                with open("Password Manager/data.json", "w") as data_file:
+                    json.dump(data, data_file, indent=4)
+            else:
+                data.update(new_data)
+                with open("Password Manager/data.json", "w") as data_file:
+                    json.dump(data, data_file, indent=4)
+
+                    website_entry.delete(0, END)
+                    password_entry.delete(0, END)
 
 
 # ---------------------------- UI SETUP ------------------------------- #
@@ -71,9 +108,13 @@ website = Label(text="Website", font=(
     FONT_NAME, 12, "bold"), highlightthickness=0)
 website.grid(column=0, row=1)
 
-website_entry = Entry(width=48)
-website_entry.grid(column=1, row=1, columnspan=2)
+website_entry = Entry(width=30)
+website_entry.grid(column=1, row=1)
 website_entry.focus()
+
+search = Button(text="Search", highlightthickness=0,
+                width=15, command=searchbox)
+search.grid(column=2, row=1)
 
 username = Label(text="Email/Username", font=(
     FONT_NAME, 12, "bold"), highlightthickness=0)
