@@ -35,7 +35,7 @@ time_now = datetime.now()
 # If the ISS is close to my current position
 
 
-def iss_porsition():
+def iss_position():
     if MY_LAT - 5 <= iss_latitude <= MY_LAT + 5 and MY_LONG - 5 <= iss_longitude <= MY_LONG + 5:
         return True
     else:
@@ -52,16 +52,17 @@ def is_night():
 
 
 # Then send me an email to tell me to look up.
-if iss_porsition() and is_night():
-    my_emails = "b.korojo@gmail.com"
-    my_passwords = "abcd1234()"
+while True:
+    time.sleep(60)
+    if iss_position() and is_night():
+        my_emails = "b.korojo@gmail.com"
+        my_passwords = "abcd1234()"
 
-    with smtplib.SMTP("smtp.gmail.com") as connections:
-        connections.starttls()
-        connections.login(user=my_emails, password=my_passwords)
-        connections.sendmail(from_addr=my_emails, to_addr="123@gmail.com",
-                             msg="Subject:Hello\n\n This is the email body")
+        with smtplib.SMTP("smtp.gmail.com") as connections:
+            connections.starttls()
+            connections.login(user=my_emails, password=my_passwords)
+            connections.sendmail(from_addr=my_emails, to_addr="123@gmail.com",
+                                 msg="Subject:Hello\n\n This is the email body")
 
 
 # BONUS: run the code every 60 seconds.
-time.sleep(60000)
