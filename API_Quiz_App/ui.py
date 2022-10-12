@@ -44,7 +44,7 @@ class QuizInterface:
             self.canvas.itemconfig(self.quote_text, text=q_text)
         else:
             self.canvas.itemconfig(
-                self.quote_text, text=f"Score: {self.quiz.score}/self")
+                self.quote_text, text=f"Score: {self.quiz.score}/{len(self.quiz.question_list)}")
             self.true_button.config(state="disabled")
             self.false_button.config(state="disabled")
 
